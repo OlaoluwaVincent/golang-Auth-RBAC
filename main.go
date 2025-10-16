@@ -34,6 +34,7 @@ func main() {
 		api.POST("/login", authCtrl.Login)
 		api.POST("/refresh", authCtrl.Refresh)
 		protected := api.Group("/protected")
+
 		protected.Use(middlewares.AuthMiddleware(authSvc))
 		{
 			protected.GET("/me", authCtrl.Me)
