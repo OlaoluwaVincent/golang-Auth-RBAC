@@ -10,6 +10,7 @@ This is a simple authentication service built with Go. It provides endpoints for
 - User Profile Update
 - Password Hashing with bcrypt
 - JWT Authentication Middleware
+- CRUD for Book Collection
 
 ## Technologies Used
 
@@ -59,7 +60,7 @@ This is a simple authentication service built with Go. It provides endpoints for
 
 4. **Run database migrations:**
 
-   You'll need to create a `users` table in your PostgreSQL database. Here's an example SQL schema:
+   You'll need to create a `users` and `books` table in your PostgreSQL database. Here's an example SQL schema:
 
    ```sql
    CREATE TABLE users (
@@ -70,3 +71,12 @@ This is a simple authentication service built with Go. It provides endpoints for
        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
    );
+
+   CREATE TABLE books (
+       id SERIAL PRIMARY KEY,
+       title VARCHAR(255) UNIQUE NOT NULL,
+       author VARCHAR(255) UNIQUE NOT NULL,
+       created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+       updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+   );
+
