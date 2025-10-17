@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"go/auth/constants"
 	"go/auth/services"
 	"net/http"
 	"strconv"
@@ -72,7 +73,7 @@ func (c *AuthController) Refresh(ctx *gin.Context) {
 }
 
 func (c *AuthController) Me(ctx *gin.Context) {
-	uid, exists := ctx.Get("user_id")
+	uid, exists := ctx.Get(constants.ContextUserID)
 	if !exists {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "unauthenticated"})
 		return
@@ -87,7 +88,7 @@ func (c *AuthController) Me(ctx *gin.Context) {
 }
 
 func (c *AuthController) AdminDashboard(ctx *gin.Context) {
-	uid, _ := ctx.Get("user_id")
-	role, _ := ctx.Get("role")
+	uid, _ := ctx.Get(constants.ContextUserID)
+	role, _ := ctx.Get(constants.ContextRole)
 	ctx.JSON(http.StatusOK, gin.H{"message": "welcome admin", "user_id": strconv.FormatUint(uint64(uid.(uint)), 10), "role": role})
 }

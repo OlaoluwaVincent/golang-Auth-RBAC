@@ -59,9 +59,11 @@ func (s *authService) Login(email, password string) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
+
 	if user == nil {
 		return "", "", errors.New("invalid credentials")
 	}
+
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
 		return "", "", errors.New("invalid credentials")
 	}

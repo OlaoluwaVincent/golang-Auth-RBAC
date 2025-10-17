@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"go/auth/constants"
 	"go/auth/services"
 	"net/http"
 	"strings"
@@ -21,8 +22,8 @@ func AuthMiddleware(auth services.AuthService) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 			return
 		}
-		c.Set("user_id", user.ID)
-		c.Set("role", user.Role)
+		c.Set(constants.ContextUserID, user.ID)
+		c.Set(constants.ContextRole, user.Role)
 		c.Next()
 	}
 }
