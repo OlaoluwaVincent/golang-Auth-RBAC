@@ -2,6 +2,7 @@ package main
 
 import (
 	"go/auth/controllers"
+	"go/auth/entities"
 	middlewares "go/auth/middleware"
 	"go/auth/repositories"
 	"go/auth/services"
@@ -21,10 +22,15 @@ func main() {
 	}
 	defer db.Close()
 	db.AutoMigrate(&repositories.User{})
+	db.AutoMigrate(&entities.Book{})
 
 	userRepo := repositories.NewGormUserRepository(db)
 	authSvc := services.NewAuthService(userRepo, os.Getenv("JWT_SECRET"), time.Minute*15, time.Hour*24*7)
 	authCtrl := controllers.NewAuthController(authSvc)
+
+	bookRepo := repositories.NewGormBookRepository(db)
+	bookSvc := services.NewBookService(bookRepo)
+	bookCtrl := controllers.NewBookController(bookSvc)
 
 	r := gin.Default()
 
@@ -38,6 +44,13 @@ func main() {
 		protected.Use(middlewares.AuthMiddleware(authSvc))
 		{
 			protected.GET("/me", authCtrl.Me)
+			book := protected.Group("/book")
+
+			book.GET("/:id", bookCtrl.GetByID)
+			book.POST("/", bookCtrl.CreateBook)
+			book.PUT("/:id", bookCtrl.UpdateBook)
+			book.DELETE("/:id", bookCtrl.DeleteById)
+
 			admin := protected.Group("/admin")
 			admin.Use(middlewares.RBACMiddleware("admin"))
 			{
