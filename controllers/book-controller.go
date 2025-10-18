@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"go/auth/entities"
+	"go/auth/helpers"
 	"go/auth/services"
 	"strconv"
 
@@ -21,14 +22,14 @@ func NewBookController(service services.BookService) *BookController {
 func (bc *BookController) CreateBook(ctx *gin.Context) {
 	var book entities.Book
 	if err := ctx.ShouldBindJSON(&book); err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		helpers.Response.ErrorResponse(ctx, err)
 		return
 	}
 	if err := bc.service.CreateRecord(&book); err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		helpers.Response.ServerErrorResponse(ctx, err)
 		return
 	}
-	ctx.JSON(201, gin.H{"id": book.ID})
+	helpers.Response.SuccessResponse(ctx, gin.H{"id": book.ID}, "Book Created")
 }
 
 func (bc *BookController) UpdateBook(ctx *gin.Context) {
@@ -36,19 +37,19 @@ func (bc *BookController) UpdateBook(ctx *gin.Context) {
 	idParam := ctx.Param("id")
 	id, err := strconv.Atoi(idParam)
 	if err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		helpers.Response.ErrorResponse(ctx, err)
 		return
 	}
 
 	err = ctx.ShouldBindJSON(&book)
 	if err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		helpers.Response.ErrorResponse(ctx, err)
 		return
 	}
 
 	err = bc.service.UpdateById(&book, id)
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		helpers.Response.ServerErrorResponse(ctx, err)
 		return
 	}
 
@@ -61,7 +62,7 @@ func (bc *BookController) DeleteById(ctx *gin.Context) {
 	id, _ := strconv.Atoi(idParam)
 
 	if err := bc.service.DeleteById(id); err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		helpers.Response.ServerErrorResponse(ctx, err)
 		return
 	}
 
@@ -74,7 +75,7 @@ func (bc *BookController) GetByID(ctx *gin.Context) {
 
 	book, err := bc.service.GetByID(id)
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		helpers.Response.ServerErrorResponse(ctx, err)
 		return
 	}
 	ctx.JSON(200, book)
