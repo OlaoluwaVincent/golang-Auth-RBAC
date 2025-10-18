@@ -18,7 +18,7 @@ This is a simple authentication service built with Go. It provides endpoints for
 - Gorilla Mux (for routing)
 - JWT (JSON Web Tokens)
 - Bcrypt (for password hashing)
-- PostgreSQL (for database) - *Note: This README assumes a PostgreSQL database. If you're using a different database, adjust the connection string and migrations accordingly.*
+- Sqlite3 (for database)
 
 ## Getting Started
 
