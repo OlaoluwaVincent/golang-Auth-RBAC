@@ -24,8 +24,8 @@ This is a simple authentication service built with Go. It provides endpoints for
 
 ### Prerequisites
 
-- Go (version 1.18 or higher)
-- PostgreSQL database
+- Go (version 1.25 or higher)
+- SQLite3
 - Git
 
 ### Installation
@@ -39,18 +39,8 @@ This is a simple authentication service built with Go. It provides endpoints for
 
 2. **Set up environment variables:**
 
-   Create a `.env` file in the root directory of the project and add the following:
-
-   DB_HOST=localhost
-   DB_PORT=5432
-   DB_USER=your_db_user
-   DB_PASSWORD=your_db_password
-   DB_NAME=auth_db
-   JWT_SECRET=your_jwt_secret_key
-   PORT=8080
-
-   ```
-   *Replace `your_db_user`, `your_db_password`, `your_jwt_secret_key` with your actual credentials.*
+   *This uses sqlite3 for the Database, upon running this app, it will be created automatically*
+   [API Documentation](https://documenter.getpostman.com/view/28337725/2sB3QQJSy5)
 
 3. **Install dependencies:**
 
