@@ -10,12 +10,17 @@ type JsonResponse struct{}
 
 var Response = JsonResponse{}
 
-func (j *JsonResponse) SuccessResponse(c *gin.Context, data any, message string) {
+func (j *JsonResponse) SuccessResponse(c *gin.Context, data any, message string, statusCode ...int) {
 	if message == "" {
 		message = "Successful"
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	code := http.StatusOK
+	if len(statusCode) > 0 {
+		code = statusCode[0]
+	}
+
+	c.JSON(code, gin.H{
 		"success": true,
 		"message": message,
 		"data":    data,

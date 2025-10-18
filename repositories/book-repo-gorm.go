@@ -35,10 +35,11 @@ func (r *GormBookRepository) FindByID(id int) (*entities.Book, error) {
 	}, nil
 }
 
-func (r *GormBookRepository) Update(u *entities.Book, id int) error {
+func (r *GormBookRepository) Update(u *entities.Book, id int) (entities.Book, error) {
 	var book entities.Book
+
 	if err := r.db.First(&book, id).Error; err != nil {
-		return errors.New("not found")
+		return book, errors.New("not found")
 	}
 
 	if u.Title != "" {
@@ -49,9 +50,10 @@ func (r *GormBookRepository) Update(u *entities.Book, id int) error {
 	}
 
 	if err := r.db.Save(&book).Error; err != nil {
-		return err
+		return book, err
 	}
-	return nil
+
+	return book, nil
 }
 
 func (r *GormBookRepository) Delete(id int) error {

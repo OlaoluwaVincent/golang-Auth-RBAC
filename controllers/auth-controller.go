@@ -1,7 +1,9 @@
 package controllers
 
 import (
+	"errors"
 	"go/auth/constants"
+	"go/auth/helpers"
 	"go/auth/services"
 	"net/http"
 	"strconv"
@@ -31,29 +33,29 @@ type loginDTO struct {
 func (c *AuthController) Register(ctx *gin.Context) {
 	var dto registerDTO
 	if err := ctx.ShouldBindJSON(&dto); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		helpers.Response.ErrorResponse(ctx, err)
 		return
 	}
 	user, err := c.auth.Register(dto.Name, dto.Email, dto.Password)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		helpers.Response.ErrorResponse(ctx, err)
 		return
 	}
-	ctx.JSON(http.StatusCreated, gin.H{"user": user})
+	helpers.Response.SuccessResponse(ctx, user, "User Created")
 }
 
 func (c *AuthController) Login(ctx *gin.Context) {
 	var dto loginDTO
 	if err := ctx.ShouldBindJSON(&dto); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		helpers.Response.ErrorResponse(ctx, err)
 		return
 	}
 	access, refresh, err := c.auth.Login(dto.Email, dto.Password)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		helpers.Response.ErrorResponse(ctx, err, http.StatusUnauthorized)
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"access_token": access, "refresh_token": refresh})
+	helpers.Response.SuccessResponse(ctx, gin.H{"access_token": access, "refresh_token": refresh}, "Login Successful")
 }
 
 func (c *AuthController) Refresh(ctx *gin.Context) {
@@ -61,30 +63,32 @@ func (c *AuthController) Refresh(ctx *gin.Context) {
 		RefreshToken string `json:"refresh_token" binding:"required"`
 	}
 	if err := ctx.ShouldBindJSON(&body); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		helpers.Response.ErrorResponse(ctx, err)
 		return
 	}
 	access, err := c.auth.Refresh(body.RefreshToken)
 	if err != nil {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		helpers.Response.ErrorResponse(ctx, err, http.StatusUnauthorized)
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"access_token": access})
+	helpers.Response.SuccessResponse(ctx, gin.H{"access_token": access}, "Token Refreshed")
 }
 
 func (c *AuthController) Me(ctx *gin.Context) {
 	uid, exists := ctx.Get(constants.ContextUserID)
 	if !exists {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "unauthenticated"})
+		err := errors.New("unauthenticated")
+		helpers.Response.ErrorResponse(ctx, err, http.StatusUnauthorized)
 		return
 	}
 	id := uid.(uint)
 	user, _ := c.auth.GetByID(id)
 	if user == nil {
-		ctx.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		err := errors.New("not found")
+		helpers.Response.ErrorResponse(ctx, err, http.StatusNotFound)
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"user": user})
+	helpers.Response.SuccessResponse(ctx, user, "User Found")
 }
 
 func (c *AuthController) AdminDashboard(ctx *gin.Context) {

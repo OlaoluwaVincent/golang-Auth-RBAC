@@ -7,7 +7,7 @@ import (
 
 type BookService interface {
 	CreateRecord(b *entities.Book) error
-	UpdateById(b *entities.Book, id int) error
+	UpdateById(b *entities.Book, id int) (entities.Book, error)
 	DeleteById(id int) error
 	GetByID(id int) (*entities.Book, error)
 }
@@ -26,7 +26,7 @@ func (s *bookService) CreateRecord(b *entities.Book) error {
 	return s.repo.Create(b)
 }
 
-func (s *bookService) UpdateById(b *entities.Book, id int) error {
+func (s *bookService) UpdateById(b *entities.Book, id int) (entities.Book, error) {
 	return s.repo.Update(b, id)
 }
 

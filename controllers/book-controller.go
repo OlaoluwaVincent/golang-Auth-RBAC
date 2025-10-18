@@ -4,6 +4,7 @@ import (
 	"go/auth/entities"
 	"go/auth/helpers"
 	"go/auth/services"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -26,10 +27,10 @@ func (bc *BookController) CreateBook(ctx *gin.Context) {
 		return
 	}
 	if err := bc.service.CreateRecord(&book); err != nil {
-		helpers.Response.ServerErrorResponse(ctx, err)
+		helpers.Response.ErrorResponse(ctx, err)
 		return
 	}
-	helpers.Response.SuccessResponse(ctx, gin.H{"id": book.ID}, "Book Created")
+	helpers.Response.SuccessResponse(ctx, book, "Book Created")
 }
 
 func (bc *BookController) UpdateBook(ctx *gin.Context) {
@@ -47,26 +48,24 @@ func (bc *BookController) UpdateBook(ctx *gin.Context) {
 		return
 	}
 
-	err = bc.service.UpdateById(&book, id)
+	book, err = bc.service.UpdateById(&book, id)
 	if err != nil {
-		helpers.Response.ServerErrorResponse(ctx, err)
+		helpers.Response.ErrorResponse(ctx, err)
 		return
 	}
-
-	ctx.JSON(200, "Book Updated")
+	helpers.Response.SuccessResponse(ctx, book, "Book Updated")
 }
 
 func (bc *BookController) DeleteById(ctx *gin.Context) {
-
 	idParam := ctx.Param("id")
 	id, _ := strconv.Atoi(idParam)
 
 	if err := bc.service.DeleteById(id); err != nil {
-		helpers.Response.ServerErrorResponse(ctx, err)
+		helpers.Response.ErrorResponse(ctx, err)
 		return
 	}
 
-	ctx.JSON(200, gin.H{"id": id})
+	helpers.Response.SuccessResponse(ctx, nil, "Book Deleted")
 }
 
 func (bc *BookController) GetByID(ctx *gin.Context) {
@@ -75,8 +74,8 @@ func (bc *BookController) GetByID(ctx *gin.Context) {
 
 	book, err := bc.service.GetByID(id)
 	if err != nil {
-		helpers.Response.ServerErrorResponse(ctx, err)
+		helpers.Response.ErrorResponse(ctx, err, http.StatusNotFound)
 		return
 	}
-	ctx.JSON(200, book)
+	helpers.Response.SuccessResponse(ctx, book, "Book Found")
 }
