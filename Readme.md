@@ -15,7 +15,7 @@ This is a simple authentication service built with Go. It provides endpoints for
 ## Technologies Used
 
 - Go
-- Gorilla Mux (for routing)
+- Gin (for routing)
 - JWT (JSON Web Tokens)
 - Bcrypt (for password hashing)
 - Sqlite3 (for database)
@@ -25,7 +25,6 @@ This is a simple authentication service built with Go. It provides endpoints for
 ### Prerequisites
 
 - Go (version 1.25 or higher)
-- SQLite3
 - Git
 
 ### Installation
@@ -40,6 +39,7 @@ This is a simple authentication service built with Go. It provides endpoints for
 2. **Set up environment variables:**
 
    *This uses sqlite3 for the Database, upon running this app, it will be created automatically*
+
    [API Documentation](https://documenter.getpostman.com/view/28337725/2sB3QQJSy5)
 
 3. **Install dependencies:**
